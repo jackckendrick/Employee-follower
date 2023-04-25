@@ -2,10 +2,10 @@ const inquirer = require ('inquirer');
 const fs = require ('fs');
 const mysql = require ('mysql2');
 const { type } = require('os');
-require("console.table")
+// require("console.table")
 
 const db = mysql.createConnection({
-    host: 'localhost',
+    host: '127.0.0.1',
     port: 3306,
     user: 'root',
     password: 'Dawn1kevin',
@@ -22,25 +22,25 @@ function firstQuestion() {
         },
     ])
     .then(answer => {
-        if(answer.action === "View all employees"){
+        if(answer.question_1 === "View all employees"){
             viewEmployees()
         } 
-        else if(answerr.action === "Add employee"){
+        else if(answer.question_1 === "Add employee"){
             addEmployee()
         }
-        else if(answer.action === "Update employee role"){
+        else if(answer.question_1 === "Update employee role"){
             updateEmployeeRole()
         }
-        else if(answer.action === "View all roles"){
+        else if(answer.question_1 === "View all roles"){
             viewRoles()
         }
-        else if(answer.action === "Add a role"){
+        else if(answer.question_1 === "Add a role"){
             addRole()
         }
-        else if(answer.action === "View all departments"){
+        else if(answer.question_1 === "View all departments"){
             viewDepartments()
         }
-        else if(answer.action === "Quit"){
+        else {
             quit()
         }
     })
@@ -80,7 +80,7 @@ function addEmployee() {
        }
     ])
     .then(answers => {
-        db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${answers.first_name}", "${answers.last_name}", ${answers.role_id});`, (err, results) => {
+        db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${answers.first_name}", "${answers.last_name}", ${answers.role_id}, ${answers.manager_id});`, (err, results) => {
             if(err) {
                 console.log(err)
             } else {
@@ -143,7 +143,7 @@ function addRole() {
        }
     ])
     .then(answers => {
-        db.query(`INSERT INTO role (role_title, salary, department) VALUES ("${answers.role_title}", "${answers.salary}", ${answers.department});`, (err, results) => {
+        db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${answers.role_title}", "${answers.salary}", ${answers.department});`, (err, results) => {
             if(err) {
                 console.log(err)
             } else {
@@ -167,3 +167,5 @@ function quit() {
     console.log("Goodbye!")
     process.exit()
 }
+
+firstQuestion();
