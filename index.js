@@ -65,19 +65,22 @@ function addEmployee() {
        },
        {
         type: "input",
-        message: "What si the employee's last name?",
+        message: "What is the employee's last name?",
         name: "last_name" 
        },
        {
-        type: "input",
+        type: "list",
         message: "What is the employee's role id?",
+        choices: ["L1", "L2", "L3", "Counsel", "Paralegal", "Janitor", "Security", "Accountant 1", "Accountant 2", "CFO", "Account Executive", "Sales Representative"],
         name: "role_id"
        },
        {
-        type: "input",
-        message: "What is the employee's manager id?",
+        type: "list",
+        message: "Who is the employee's manager?",
+        choices: ["Anne", "Tom", "Kathy", "Kenya", "Josh", "John"],
         name: "manager_id"
-       }
+
+       },
     ])
     .then(answers => {
         db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${answers.first_name}", "${answers.last_name}", ${answers.role_id}, ${answers.manager_id});`, (err, results) => {
