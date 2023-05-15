@@ -35,3 +35,43 @@ VALUES ("L1", 100000, 1), ("L2", 150000, 1), ("L3", 200000, 1), ("Counsel", 2100
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Jack", "Kendrick", 4, null), ("Lisa", "Thomas", 2, 1), ("Jane", "Doe", 3, 1), ("John", "Smith", 1, 2), ("Steve", "Jackson", 6, 2), ("Allison", "Perry", 6, 2), ("Jim", "Cook", 3, 1), ("Alex", "Kim", 5, 2), ("Tim,", "Roberts", 4, 4), ("Ryan", "Sartin", 3, 1), ("Tom", "Nordan", 4, 6), ("Lily", "Ho", 5, 2), ("Anne", "Strait", 3, 7), ("Kim", "Kardashian", 3, 2), ("Khloe", "Thompson", 5, 3), ("Todd", "Chrisley", 7, 3), ("Kenya", "Moore", 3, 4), ("Kandi", "Burrus", 2, 2), ("Kathy", "Hilton", 6, 1);
+
+
+async function addRole() {
+    const [departments] = await db.promise().query("SELECT * FROM department")
+    const departmentsArray = departments.map(department => (
+        {name: department.department_name,value: department.id}
+    ))
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        message: "What is the role title?",
+        name: "role_title",
+      },
+      {
+        type: "input",
+        message: "What is the role's salary?",
+        name: "salary",
+      },
+      {
+        type: "list",
+        message: "What department is the role in?",
+        name: "department",
+        choices: departmentsArray
+      },
+    ])
+    .then((answers) => {
+      db.query(
+        `INSERT INTO role (title, salary, department_id) VALUES ("${answers.role_title}", "${answers.salary}", ${answers.department});`,
+        (err, results) => {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log("Role has been added!");
+          }
+        }
+      );
+    });
+//   firstQuestion();
+}

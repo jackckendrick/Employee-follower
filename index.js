@@ -62,7 +62,16 @@ function viewEmployees() {
     .catch((err) => console.log(err));
 }
 
-function addEmployee() {
+async function addEmployee() {
+    const [roles] = await db.promise().query("SELECT * FROM role")
+    const rolesArray = roles.map(role => (
+      {name: role.title, value: role.id}
+    ))
+
+    const [employees] = await db.promise().query("SELECT * FROM employee")
+    const employeesArray = employees.map(employee => (
+      {name: employee.first_name, value: employee.manager_id}
+    ))
   inquirer
     .prompt([
       {
@@ -77,27 +86,14 @@ function addEmployee() {
       },
       {
         type: "list",
-        message: "What is the employee's role id?",
-        choices: [
-          "L1",
-          "L2",
-          "L3",
-          "Counsel",
-          "Paralegal",
-          "Janitor",
-          "Security",
-          "Accountant 1",
-          "Accountant 2",
-          "CFO",
-          "Account Executive",
-          "Sales Representative",
-        ],
+        message: "What is the employee's role?",
+        choices: rolesArray,
         name: "role_id",
       },
       {
         type: "list",
         message: "Who is the employee's manager?",
-        choices: ["Anne", "Tom", "Kathy", "Kenya", "Josh", "John"],
+        choices: employeesArray,
         name: "manager_id",
       },
     ])
@@ -111,17 +107,22 @@ function addEmployee() {
             console.log("Employee has been added!");
           }
         }
-      );
+        );
+        firstQuestion();
     });
-  firstQuestion();
 }
 
-function updateEmployeeRole() {
+async function updateEmployeeRole() {
+  const [employees] = await db.promise().query("SELECT * FROM employee")
+    const employeesArray = employees.map(employee => (
+      {name: employee.first_name, value: employee.first_name}
+    ))
   inquirer
     .prompt([
       {
-        type: "input",
+        type: "list",
         message: "What is the employee's name?",
+        choices:  employeesArray,
         name: "first_name",
       },
       {
@@ -132,7 +133,7 @@ function updateEmployeeRole() {
     ])
     .then((answers) => {
       db.query(
-        `UPDATE employee SET role_id = ${answers.role_id} WHERE first_name =${answers.first_name}`,
+        `UPDATE employee SET role_id = ${answers.role_id} WHERE first_name = ${answers.first_name}`,
         (err, results) => {
           if (err) {
             console.log(err);
@@ -141,8 +142,8 @@ function updateEmployeeRole() {
           }
         }
       );
+      firstQuestion();
     });
-  firstQuestion();
 }
 
 function viewRoles() {
@@ -191,9 +192,9 @@ async function addRole() {
             console.log("Role has been added!");
           }
         }
-      );
+        );
+        firstQuestion();
     });
-//   firstQuestion();
 }
 
 function viewDepartments() {
