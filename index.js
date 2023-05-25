@@ -113,16 +113,18 @@ async function addEmployee() {
 }
 
 async function updateEmployeeRole() {
-  const [employees] = await db.promise().query("SELECT * FROM employee")
-    const employeesArray = employees.map(employee => (
-      {name: employee.first_name, value: employee.first_name}
-    ))
+  const [employees] = await db.promise().query("SELECT * FROM employee");
+  const employeesArray = employees.map((employee) => ({
+    name: employee.first_name,
+    value: employee.first_name,
+  }));
+
   inquirer
     .prompt([
       {
         type: "list",
         message: "What is the employee's name?",
-        choices:  employeesArray,
+        choices: employeesArray,
         name: "first_name",
       },
       {
@@ -132,19 +134,23 @@ async function updateEmployeeRole() {
       },
     ])
     .then((answers) => {
+      const { first_name, role_id } = answers;
+
       db.query(
-        `UPDATE employee SET role_id = ${answers.role_id} WHERE first_name = ${answers.first_name}`,
+        `UPDATE employee SET role_id = ? WHERE first_name = ?`,
+        [role_id, first_name],
         (err, results) => {
           if (err) {
             console.log(err);
           } else {
             console.log("Employee has been updated!");
           }
+          firstQuestion();
         }
       );
-      firstQuestion();
     });
 }
+
 
 function viewRoles() {
   db.promise()
